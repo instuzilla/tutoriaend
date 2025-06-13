@@ -1,8 +1,12 @@
-from django.shortcuts import render
+
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework import status
 from .utils import calculate_distance
+from copy  import deepcopy
+from .models import TeacherProfile
+from .serializer import TeacherProfileSerializer
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -55,3 +59,29 @@ def set_location(request):
     user.location = location
     user.save()
     return Response({"detail": "Location updated successfully."}, status=200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_teacher(request):
+    teacher = TeacherProfile.objects.filter(user=request.user)
+    if not teacher.exists():
+        data = deepcopy(request.data)
+        data['user'] = request.user.id
+        print(data)
+        serializer = TeacherProfileSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            request.user.is_teacher = True
+            request.user.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    else:
+        return Response({"detail": "Teacher profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
+   
+    
+
+
+
+

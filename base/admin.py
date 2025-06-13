@@ -8,10 +8,10 @@ from .models import (CustomUser, AcademicProfile, TeacherProfile,
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     fieldsets = UserAdmin.fieldsets + (
-        ('Additional Info', {'fields': ('is_teacher','location')}),
+        ('Additional Info', {'fields': ('is_teacher','location', 'banned')}),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Additional Info', {'fields': ('is_teacher','location')}),
+        ('Additional Info', {'fields': ('is_teacher','location', 'banned')}),
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)

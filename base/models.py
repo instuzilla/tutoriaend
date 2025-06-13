@@ -12,6 +12,7 @@ class CustomUser(AbstractUser):
         null=True,
         help_text="Comma separated values: lat,lon,accuracy (e.g., '23.4567,90.1234,10')"
     )
+    banned = models.BooleanField(default=False, help_text="Indicates if the user is banned from the platform.")
 
 def certificate_upload_to(instance, filename):
     return f"certificates/{instance.user.username}/{filename}"
@@ -69,6 +70,7 @@ class Qualification(models.Model):
 
 class TeacherProfile(models.Model):
     user = models.OneToOneField('CustomUser', on_delete=models.CASCADE, related_name='teacher_profile')
+    verified = models.BooleanField(default=False, help_text="Indicates if the teacher's profile has been verified by an admin.")
     bio = models.TextField(blank=True, null=True, help_text="A brief biography of the teacher.")
     subject_list = models.ManyToManyField(
         Subject,
